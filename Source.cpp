@@ -2,7 +2,7 @@
 
 int main() {
 	replacement a;
-	a.key_generator("my_alphabet.alph", "ssss", "ssss.key");
+	a.key_generator("my_alphabet.alph", "replacement.key");
 	//json jj;
 	//fstream file("my_alphabet.alph");
 	//string aa;
