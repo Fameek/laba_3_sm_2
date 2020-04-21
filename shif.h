@@ -236,8 +236,65 @@ public:
 
 
 	void Encrypt(string path_save_file, string path_key, string path_txt) {
+		bool trriger = 0;
+		if (path_key.substr(path_key.find_last_of(".") + 1) != "key") {
+			trriger = 1;
+		}
+		if (path_txt.substr(path_txt.find_last_of(".") + 1) != "txt") {
+			trriger = 1;
+		}
+		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "encrypt") {
+			trriger = 1;
+		}
+		if (FileIsExist(path_key)) {
+			trriger = 1;
+		}
+		if (FileIsExist(path_txt)) {
+			trriger = 1;
+		}
+		if (trriger == 0) {
+			json key;
+			ifstream key_file(path_key);
+			key_file >> key;
+			key_file.close();
+			
+			auto type = key.find("alg_type");
+			if (type.value() == "replacement") {
+				ifstream txt_file(path_txt);
+				if (txt_file.peek() != EOF)  // если первый символ не конец файла
+				{
+					int key_size = key.at("key").size();
+					/*
+					планирую вычлен€ть гетлайном файл и сравнивать 
+					по символьно с ключем мен€€ стринг
+					после запихивание этих стрингов в новый файл
+					все это в цикле(пока файл жив)
+					при завершении ... хм... все	
+					*/
+					
 
 
+
+
+
+
+
+
+
+				}
+				else {
+					cout << "txt empty" << endl;
+				}
+				txt_file.close();
+			}
+			else {
+				cout << "not correct type" << endl;
+			}
+
+		}
+		else {
+			cout << "not correct file extension or file is not found" << endl;
+		}
 
 
 	}
