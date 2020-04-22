@@ -233,8 +233,6 @@ public:
 		}
 	}
 
-
-
 	void Encrypt(string path_save_file, string path_key, string path_txt) {
 		bool trriger = 0;
 		if (path_key.substr(path_key.find_last_of(".") + 1) != "key") {
@@ -264,22 +262,27 @@ public:
 				if (txt_file.peek() != EOF)  // если первый символ не конец файла
 				{
 					int key_size = key.at("key").size();
-					/*
-					планирую вычлен€ть гетлайном файл и сравнивать 
-					по символьно с ключем мен€€ стринг
-					после запихивание этих стрингов в новый файл
-					все это в цикле(пока файл жив)
-					при завершении ... хм... все	
-					*/
-					
+					ofstream encrypt_file(path_save_file);
+					while (txt_file) {
+						string txt_str;
+						getline(txt_file, txt_str);
+						for (int i = 0; i < txt_str.size(); i++) {
+							string simvol;
+							simvol.push_back(txt_str[i]);
+							for (int j = 0; j < key_size; j++) {								
+								if(simvol==key.at("key").at(j).at(0)){
+									string simvol_1;
+									simvol_1 = key.at("key").at(j).at(1);
+									txt_str[i] = simvol_1[0];
+									break;
+								}
 
-
-
-
-
-
-
-
+							}
+						}
+						encrypt_file << txt_str;
+						encrypt_file << "\n";
+					}
+					encrypt_file.close();
 
 				}
 				else {
@@ -299,13 +302,76 @@ public:
 
 	}
 
-
-
-
 	void decipher(string path_key, string path_encrypt, string path_save_file) {
+		bool trriger = 0;
+		if (path_key.substr(path_key.find_last_of(".") + 1) != "key") {
+			trriger = 1;
+		}
+		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "txt") {
+			trriger = 1;
+		}
+		if (path_encrypt.substr(path_encrypt.find_last_of(".") + 1) != "encrypt") {
+			trriger = 1;
+		}
+		if (FileIsExist(path_key)) {
+			trriger = 1;
+		}
+		if (FileIsExist(path_encrypt)) {
+			trriger = 1;
+		}
+		if (trriger == 0) {
+			json key;
+			ifstream key_file(path_key);
+			key_file >> key;
+			key_file.close();
+
+			auto type = key.find("alg_type");
+			if (type.value() == "replacement") {
+				ifstream encrypt_file(path_encrypt);
+				if (encrypt_file.peek() != EOF)  // если первый символ не конец файла
+				{
+					int key_size = key.at("key").size();
+					ofstream txt_file(path_save_file);
+					while (encrypt_file) {
+						string encrypt_str;
+						getline(encrypt_file, encrypt_str);
+						for (int i = 0; i < encrypt_str.size(); i++) {
+							string simvol;
+							simvol.push_back(encrypt_str[i]);
+							for (int j = 0; j < key_size; j++) {
+								if (simvol == key.at("key").at(j).at(1)) {
+									string simvol_1;
+									simvol_1 = key.at("key").at(j).at(0);
+									encrypt_str[i] = simvol_1[0];
+									break;
+								}
+
+							}
+						}
+						txt_file << encrypt_str;
+						txt_file << "\n";
+					}
+					txt_file.close();
+				}
+				else {
+					cout << "encrypt empty" << endl;
+				}
+				encrypt_file.close();
+			}
+			else {
+				cout << "not correct type" << endl;
+			}
 
 
 
+
+
+
+
+		}
+		else {
+			cout << "not correct file extension or file is not found" << endl;
+		}
 
 	}
 
