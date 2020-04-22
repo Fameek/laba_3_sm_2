@@ -212,7 +212,11 @@ public:
 
 					}
 				}
-				
+				/*string dd;
+				cout << "Show key(Y/N)"; cin >> dd;
+				if (dd[0] == 'Y' || dd[0] == 'y') {
+					cout << "key: " << key_data << endl;
+				}*/
 				for (int i = 0; i < alph_data_str.size(); i++) {
 					string aa;
 					string ee;
@@ -377,7 +381,7 @@ public:
 
 };
 
-class rearrangement : public cipher { // перестановка
+class permutation : public cipher { // перестановка
 private:
 	int blak_list_f(string BB, int key_sm, string alph, int val) {
 		int minus = key_sm % 2;
@@ -558,7 +562,11 @@ public:
 
 					//}
 				}
-
+				/*string dd;
+				cout << "Show key(Y/N)"; cin >> dd;
+				if (dd[0] == 'Y' || dd[0] == 'y') {
+					cout << "key: " << key_data << endl;
+				}*/
 				for (int i = 0; i < alph_data_str.size(); i++) {
 					string aa;
 					int ee;
@@ -901,6 +909,11 @@ public:
 					ee.push_back(key_data[i]);
 					key.at("key").push_back(json::array({ aa,ee }));
 				}
+				/*string dd;
+				cout << "Show key(Y/N)"; cin >> dd;
+				if (dd[0] == 'Y' || dd[0] == 'y') {
+					cout << "key: " << key_data << endl;
+				}*/
 				ofstream key_file(path_save_file);
 				key_file << key;
 				key_file.close();
