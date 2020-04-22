@@ -378,9 +378,102 @@ public:
 };
 
 class rearrangement : public cipher { // перестановка
+private:
+	bool FileIsExist(string filePath)
+	{
+		bool isExist = false;
+		ifstream fin(filePath);
+
+		if (fin.is_open()) {
+
+		}
+		else {
+			isExist = true;
+		}
+
+		fin.close();
+		return isExist;
+	}
 public:
 	void key_generator(string path_alph, string path_save_file) {
+		bool trriger = 0;
+		if (path_alph.substr(path_alph.find_last_of(".") + 1) != "alph") {
+			trriger = 1;
+		}
+		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "key") {
+			trriger = 1;
+		}
+		if (FileIsExist(path_alph)) {
+			trriger = 1;
+		}
+		if (trriger == 0) {
+			ifstream alph_file(path_alph);
+			json alph;
+			alph_file >> alph;
+			alph_file.close();
+			auto array_alph = alph.find("alp");
+			if (array_alph != alph.end()) { // если файл правильный
+				json key = { {"alg_type", "rearrangement"},{"key",{}} };
+				string alph_data_str;
+				json alph_data = alph.at("alp");
 
+				json::iterator it = alph_data.begin();
+				for (int i = 0; i < alph.at("alp").size(); i++) { // запись данных библиотеки в стринг
+					string tt = *it;
+					alph_data_str.push_back(tt[0]);
+					it++;
+				}
+				int* key_data = new int[alph_data_str.size()];				
+				srand(time(0));
+				for (int i = 0; i < alph_data_str.size(); i++) {
+					int key_int = rand() % 10 + 1;
+					int minus = key_int % 2;
+					if (minus == 0) {
+						int cha = alph_data_str[i] + key_int;
+						if (cha > 126) {
+							key_data[i] = -key_int;
+						}
+						else {
+							key_data[i] = key_int;
+						}
+					}
+					else {
+						int cha = alph_data_str[i] - key_int;
+						if (cha < 32) {
+							key_data[i] = key_int;
+						}
+						else {
+							key_data[i] = -key_int;
+						}
+					}
+				}
+
+				for (int i = 0; i < alph_data_str.size(); i++) {
+					string aa;
+					int ee;
+					aa.push_back(alph_data_str[i]);
+					ee = key_data[i];
+					key.at("key").push_back(json::array({ aa,ee }));
+				}
+				ofstream key_file(path_save_file);
+				key_file << key;
+				key_file.close();
+				delete [] key_data;
+
+
+
+
+
+
+			}
+			else {
+				cout << "alph is not correct!" << endl;
+			}
+
+		}
+		else {
+			cout << "not correct file extension or file is not found" << endl;
+		}
 	}
 	void Encrypt(string path_save_file, string path_key, string path_txt) {
 
