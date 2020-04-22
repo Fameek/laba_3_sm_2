@@ -1,0 +1,11 @@
+i'm a string
+i'm second string
+aaaa
+bbb
+
+why i'm have long distens...
+
+qwertyuiop[]';lkjhgfdsazxcvbnm,./
+QWERTYUIOP[]';LKJHGFDSAZXCVBNM,./
+
+

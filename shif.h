@@ -379,6 +379,99 @@ public:
 
 class rearrangement : public cipher { // перестановка
 private:
+	int blak_list_f(string BB, int key_sm, string alph, int val) {
+		int minus = key_sm % 2;
+		char test;
+		int key_sm_2 = 0 - key_sm;
+		if (minus == 0) {
+			test = alph[val] + key_sm;
+		}
+		else {
+			
+			
+			test = alph[val] + key_sm_2;
+		}
+		bool bb_trriger = 0;
+		bool alph_trriger = 0;
+		for (int i = 0; i < alph.size(); i++) {
+			if (test == alph[i]) {
+				alph_trriger = 1;
+			}
+		}
+		for (int i = 0; i < BB.size(); i++) {
+			if (test == BB[i]) {
+				bb_trriger = 1;
+			}
+		}
+		
+		if (bb_trriger == 0 && alph_trriger == 1) {
+			if (minus == 0) {
+				return key_sm;
+			}
+			else {
+				return key_sm_2;
+			}
+		}
+		else {
+			test = 126;
+			for (int i = 0; i < 40; i++) {
+				bb_trriger = 0;
+				int rr = rand() % alph.size();
+				for (int j = 0; j < BB.size(); j++) {
+					if (BB[j] == alph[rr]) {
+						bb_trriger = 1;
+						break;
+					}
+				}
+				if (bb_trriger == 0) {
+					test = alph[rr];
+					break;
+				}
+			}
+			if (test == 126) {
+				for (int i = 0; i < alph.size(); i++) {
+					bb_trriger = 0;
+					for (int j = 0; j < BB.size(); j++) {
+						if (alph[i] == BB[j]) {
+							bb_trriger = 1;
+							break;
+						}
+					}
+					if (bb_trriger == 0) {
+						test = alph[i];
+						break;
+					}
+
+				}
+
+
+			}
+			
+				int test_int = test;
+				int alph_int = alph[val];
+				int val_1 = alph_int - test_int;
+				
+				/*if (val_1 >= 0) {
+					*/
+					val_1 = 0-val_1;
+
+					return val_1;
+				/*}
+				else {
+					return val_1;
+				}*/
+			
+
+
+
+		}
+
+
+
+
+
+
+	}
 	bool FileIsExist(string filePath)
 	{
 		bool isExist = false;
@@ -425,27 +518,45 @@ public:
 				}
 				int* key_data = new int[alph_data_str.size()];				
 				srand(time(0));
+				string black_list;
 				for (int i = 0; i < alph_data_str.size(); i++) {
-					int key_int = rand() % 10 + 1;
-					int minus = key_int % 2;
-					if (minus == 0) {
-						int cha = alph_data_str[i] + key_int;
-						if (cha > 126) {
-							key_data[i] = -key_int;
-						}
-						else {
-							key_data[i] = key_int;
-						}
-					}
-					else {
-						int cha = alph_data_str[i] - key_int;
-						if (cha < 32) {
-							key_data[i] = key_int;
-						}
-						else {
-							key_data[i] = -key_int;
-						}
-					}
+					int key_int = rand() % 5 + 1;
+					int cha = blak_list_f(black_list, key_int, alph_data_str, i);
+					key_data[i] = cha;
+					black_list.push_back(alph_data_str[i] + cha);
+					//int minus = key_int % 2;
+					//if (minus == 0) {
+					//	
+					//	int cha = blak_list_f(black_list, key_int, alph_data_str,i);
+
+
+					//	//int cha = alph_data_str[i] + key_int;
+					//	//if (cha > 126) {
+					//	//	key_data[i] = -key_int;
+					//	//}
+					//	//else {
+					//	//	key_data[i] = key_int;
+					//	//}
+
+
+
+					//}
+					//else {
+
+
+
+					//	//int cha = alph_data_str[i] - key_int;
+					//	//if (cha < 32) {
+					//	//	key_data[i] = key_int;
+					//	//}
+					//	//else {
+					//	//	key_data[i] = -key_int;
+					//	//}
+
+
+
+
+					//}
 				}
 
 				for (int i = 0; i < alph_data_str.size(); i++) {
@@ -476,10 +587,139 @@ public:
 		}
 	}
 	void Encrypt(string path_save_file, string path_key, string path_txt) {
+		bool trriger = 0;
+		if (path_key.substr(path_key.find_last_of(".") + 1) != "key") {
+			trriger = 1;
+		}
+		if (path_txt.substr(path_txt.find_last_of(".") + 1) != "txt") {
+			trriger = 1;
+		}
+		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "encrypt") {
+			trriger = 1;
+		}
+		if (FileIsExist(path_key)) {
+			trriger = 1;
+		}
+		if (FileIsExist(path_txt)) {
+			trriger = 1;
+		}
+		if (trriger == 0) {
+			json key;
+			ifstream key_file(path_key);
+			key_file >> key;
+			key_file.close();
 
+			auto type = key.find("alg_type");
+			if (type.value() == "rearrangement") {
+				ifstream txt_file(path_txt);
+				if (txt_file.peek() != EOF)  // если первый символ не конец файла
+				{
+					int key_size = key.at("key").size();
+					ofstream encrypt_file(path_save_file);
+					while (txt_file) {
+						string txt_str;
+						getline(txt_file, txt_str);
+						for (int i = 0; i < txt_str.size(); i++) {
+							string simvol;
+							simvol.push_back(txt_str[i]);
+							for (int j = 0; j < key_size; j++) {
+								if (simvol == key.at("key").at(j).at(0)) {
+									int simvol_1;
+									simvol_1 = key.at("key").at(j).at(1);
+									txt_str[i] = txt_str[i] + simvol_1;
+									break;
+								}
+
+							}
+						}
+						encrypt_file << txt_str;
+						encrypt_file << "\n";
+					}
+					encrypt_file.close();
+
+				}
+				else {
+					cout << "txt empty" << endl;
+				}
+				txt_file.close();
+			}
+			else {
+				cout << "not correct type" << endl;
+			}
+
+		}
+		else {
+			cout << "not correct file extension or file is not found" << endl;
+		}
 
 	}
 	void decipher(string path_key, string path_encrypt, string path_save_file) {
+		bool trriger = 0;
+		if (path_key.substr(path_key.find_last_of(".") + 1) != "key") {
+			trriger = 1;
+		}
+		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "txt") {
+			trriger = 1;
+		}
+		if (path_encrypt.substr(path_encrypt.find_last_of(".") + 1) != "encrypt") {
+			trriger = 1;
+		}
+		if (FileIsExist(path_key)) {
+			trriger = 1;
+		}
+		if (FileIsExist(path_encrypt)) {
+			trriger = 1;
+		}
+		if (trriger == 0) {
+			json key;
+			ifstream key_file(path_key);
+			key_file >> key;
+			key_file.close();
+
+			auto type = key.find("alg_type");
+			if (type.value() == "rearrangement") {
+				ifstream encrypt_file(path_encrypt);
+				if (encrypt_file.peek() != EOF)  // если первый символ не конец файла
+				{
+					int key_size = key.at("key").size();
+					ofstream txt_file(path_save_file);
+					while (encrypt_file) {
+						string encrypt_str;
+						getline(encrypt_file, encrypt_str);
+						for (int i = 0; i < encrypt_str.size(); i++) {
+							string simvol;
+							simvol.push_back(encrypt_str[i]);
+							for (int j = 0; j < key_size; j++) {
+								string key_sm = key.at("key").at(j).at(0);
+								int key_sdvig = key.at("key").at(j).at(1);
+
+								if (simvol[0] == key_sm[0]+key_sdvig) {
+									int simvol_1;
+									simvol_1 = key.at("key").at(j).at(1);
+									encrypt_str[i] = encrypt_str[i]-simvol_1;
+									break;
+								}
+
+							}
+						}
+						txt_file << encrypt_str;
+						txt_file << "\n";
+					}
+					txt_file.close();
+				}
+				else {
+					cout << "encrypt empty" << endl;
+				}
+				encrypt_file.close();
+			}
+			else {
+				cout << "not correct type" << endl;
+			}
+
+		}
+		else {
+			cout << "not correct file extension or file is not found" << endl;
+		}
 
 	}
 };
