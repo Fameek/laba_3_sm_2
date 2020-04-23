@@ -31,7 +31,14 @@ int main() {
 					cout << "Enter key path(.key) :"; cin >> path_key; cout << endl;
 					a.Encrypt(path_save_file, path_key, path_txt);
 					
-					cout << "Finish" << endl;
+					fstream ff(path_save_file);
+					if (ff.is_open()) {
+						cout << "Finish" << endl;
+					}
+					else {
+						cout << "ERROR" << endl;
+					}
+					ff.close();
 					
 					
 				}
@@ -48,6 +55,9 @@ int main() {
 					fstream ff(path_save_file);
 					if (ff.is_open()) {
 						cout << "Finish" << endl;
+					}
+					else {
+						cout << "ERROR" << endl;
 					}
 					ff.close();
 
@@ -66,6 +76,9 @@ int main() {
 					fstream ff(path_save_file);
 					if (ff.is_open()) {
 						cout << "Finish" << endl;
+					}
+					else {
+						cout << "ERROR" << endl;
 					}
 					ff.close();
 
@@ -96,6 +109,9 @@ int main() {
 					if (ff.is_open()) {
 						cout << "Finish" << endl;
 					}
+					else {
+						cout << "ERROR" << endl;
+					}
 					ff.close();
 				}
 				else if (i == 2) {
@@ -111,6 +127,9 @@ int main() {
 					fstream ff(path_save_file);
 					if (ff.is_open()) {
 						cout << "Finish" << endl;
+					}
+					else {
+						cout << "ERROR" << endl;
 					}
 					ff.close();
 
@@ -128,6 +147,9 @@ int main() {
 					fstream ff(path_save_file);
 					if (ff.is_open()) {
 						cout << "Finish" << endl;
+					}
+					else {
+						cout << "ERROR" << endl;
 					}
 					ff.close();
 
@@ -157,6 +179,9 @@ int main() {
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
 				}
+				else {
+					cout << "ERROR" << endl;
+				}
 				ff.close();
 			}
 			else if (i == 2) {
@@ -170,6 +195,9 @@ int main() {
 				fstream ff(path_save_file);
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
+				}
+				else {
+					cout << "ERROR" << endl;
 				}
 				ff.close();
 
@@ -186,6 +214,9 @@ int main() {
 				fstream ff(path_save_file);
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
+				}
+				else {
+					cout << "ERROR" << endl;
 				}
 				ff.close();
 
