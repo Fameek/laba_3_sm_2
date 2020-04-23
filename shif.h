@@ -6,7 +6,7 @@ using namespace std;
 using json = nlohmann::json;
 class cipher {
 public:
-	virtual void key_generator(string path_alph, string path_save_file) = 0;
+	virtual void key_generator(string path_save_file) = 0;
 	virtual void Encrypt(string path_save_file, string path_key, string path_txt) = 0;
 	virtual void decipher(string path_key, string path_encrypt, string path_save_file) = 0;
 };
@@ -158,8 +158,10 @@ private:
 		return result;*/
 	}
 public:
-	void key_generator(string path_alph,string path_save_file) {
+	void key_generator(string path_save_file) {
 		bool trriger = 0;
+		string path_alph;
+		cout << "Enter the path to the alphabet(.alph): "; cin >> path_alph; cout << endl;
 		if (path_alph.substr(path_alph.find_last_of(".") + 1) != "alph") {
 			trriger = 1;
 		}
@@ -492,101 +494,69 @@ private:
 		return isExist;
 	}
 public:
-	void key_generator(string path_alph, string path_save_file) {
+	void key_generator(string path_save_file) {
 		bool trriger = 0;
-		if (path_alph.substr(path_alph.find_last_of(".") + 1) != "alph") {
-			trriger = 1;
-		}
+		
+
+
 		if (path_save_file.substr(path_save_file.find_last_of(".") + 1) != "key") {
 			trriger = 1;
 		}
-		if (FileIsExist(path_alph)) {
-			trriger = 1;
-		}
+		
 		if (trriger == 0) {
-			ifstream alph_file(path_alph);
-			json alph;
-			alph_file >> alph;
-			alph_file.close();
-			auto array_alph = alph.find("alp");
-			if (array_alph != alph.end()) { // если файл правильный
-				json key = { {"alg_type", "rearrangement"},{"key",{}} };
-				string alph_data_str;
-				json alph_data = alph.at("alp");
-
-				json::iterator it = alph_data.begin();
-				for (int i = 0; i < alph.at("alp").size(); i++) { // запись данных библиотеки в стринг
-					string tt = *it;
-					alph_data_str.push_back(tt[0]);
-					it++;
-				}
-				int* key_data = new int[alph_data_str.size()];				
+			int key_size;
+			cout << "Enter the key size: "; cin >> key_size; cout << endl;
+			if (key_size > 0) {
+				json key = { {"alg_type", "permutation"},{"key",{}} };
+				int* key_int = new int[key_size];
+				
 				srand(time(0));
-				string black_list;
-				for (int i = 0; i < alph_data_str.size(); i++) {
-					int key_int = rand() % 5 + 1;
-					int cha = blak_list_f(black_list, key_int, alph_data_str, i);
-					key_data[i] = cha;
-					black_list.push_back(alph_data_str[i] + cha);
-					//int minus = key_int % 2;
-					//if (minus == 0) {
-					//	
-					//	int cha = blak_list_f(black_list, key_int, alph_data_str,i);
+				for (int i = 0; i < key_size; i++) {
+					bool trriger = 0;
+					for (int j = 0; j < key_size + 100; j++) {
+						trriger = 0;
+						int nam = rand() % key_size + 1;
+						for (int k = 0; k < key_size; k++) {
+							if (key_int[k] == nam) {
+								trriger = 1;
+							}
+						}
+						if (trriger == 0) {
+							key_int[i] = nam;
+							break;
+						}
+					}
+					if (trriger == 1) {
+						for (int j = 0; j < key_size; j++) {
+							trriger = 0;
+							int nam = j + 1;
+							for (int k = 0; k < key_size; k++) {
+								if (nam == key_int[k]) {
+									trriger = 1;
+								}
+							}
+							if (trriger == 0) {
+								key_int[i] = nam;
+								break;
+							}
+						}
+					}
 
-
-					//	//int cha = alph_data_str[i] + key_int;
-					//	//if (cha > 126) {
-					//	//	key_data[i] = -key_int;
-					//	//}
-					//	//else {
-					//	//	key_data[i] = key_int;
-					//	//}
-
-
-
-					//}
-					//else {
-
-
-
-					//	//int cha = alph_data_str[i] - key_int;
-					//	//if (cha < 32) {
-					//	//	key_data[i] = key_int;
-					//	//}
-					//	//else {
-					//	//	key_data[i] = -key_int;
-					//	//}
-
-
-
-
-					//}
 				}
-				/*string dd;
-				cout << "Show key(Y/N)"; cin >> dd;
-				if (dd[0] == 'Y' || dd[0] == 'y') {
-					cout << "key: " << key_data << endl;
-				}*/
-				for (int i = 0; i < alph_data_str.size(); i++) {
-					string aa;
-					int ee;
-					aa.push_back(alph_data_str[i]);
-					ee = key_data[i];
-					key.at("key").push_back(json::array({ aa,ee }));
+				for (int i = 0; i < key_size; i++) {
+
+					key.at("key").push_back(key_int[i]);
+
 				}
 				ofstream key_file(path_save_file);
 				key_file << key;
 				key_file.close();
-				delete [] key_data;
 
-
-
-
-
-
+			
+				delete[]key_int;
 			}
 			else {
-				cout << "alph is not correct!" << endl;
+				cout << "Size is not correct" << endl;
 			}
 
 		}
@@ -618,33 +588,65 @@ public:
 			key_file.close();
 
 			auto type = key.find("alg_type");
-			if (type.value() == "rearrangement") {
+			if (type.value() == "permutation") {
 				ifstream txt_file(path_txt);
 				if (txt_file.peek() != EOF)  // если первый символ не конец файла
 				{
 					int key_size = key.at("key").size();
 					ofstream encrypt_file(path_save_file);
+
+
 					while (txt_file) {
 						string txt_str;
+						string end;
+						
 						getline(txt_file, txt_str);
-						for (int i = 0; i < txt_str.size(); i++) {
-							string simvol;
-							simvol.push_back(txt_str[i]);
-							for (int j = 0; j < key_size; j++) {
-								if (simvol == key.at("key").at(j).at(0)) {
-									int simvol_1;
-									simvol_1 = key.at("key").at(j).at(1);
-									txt_str[i] = txt_str[i] + simvol_1;
-									break;
-								}
-
+						int ff = txt_str.size() % key_size;
+						if (ff != 0) {
+							int rr = key_size - ff;
+							for (int i = 0; i < rr; i++) {
+								txt_str.push_back('#');
 							}
 						}
-						encrypt_file << txt_str;
+						char* str_encrupt_ch = new char [txt_str.size()];
+						/*for (int i = 0; i < txt_str.size(); i++) {
+
+							str_encrupt_ch[i] = '#';
+
+						}*/
+						ff = txt_str.size() / key_size;
+						int txt_elem = 0;
+						for (int i = 0; i < ff; i++) {
+							for (int j = 0; j < key_size; j++) {
+								int tt = key.at("key").at(j) - 1;
+								
+								int iii = i * key_size;
+								str_encrupt_ch[tt + iii] = txt_str[txt_elem];
+								txt_elem++;
+
+							}
+
+
+						}
+
+						for (int i = 0 ; i < txt_str.size() ; i++) {
+
+							end.push_back(str_encrupt_ch[i]);
+
+						}
+
+
+						delete[]str_encrupt_ch;
+						encrypt_file << end;
 						encrypt_file << "\n";
 					}
-					encrypt_file.close();
 
+
+
+
+
+
+					encrypt_file.close();
 				}
 				else {
 					cout << "txt empty" << endl;
@@ -685,34 +687,58 @@ public:
 			key_file.close();
 
 			auto type = key.find("alg_type");
-			if (type.value() == "rearrangement") {
+			if (type.value() == "permutation") {
 				ifstream encrypt_file(path_encrypt);
 				if (encrypt_file.peek() != EOF)  // если первый символ не конец файла
 				{
 					int key_size = key.at("key").size();
 					ofstream txt_file(path_save_file);
+					
 					while (encrypt_file) {
 						string encrypt_str;
+						string end;
 						getline(encrypt_file, encrypt_str);
-						for (int i = 0; i < encrypt_str.size(); i++) {
-							string simvol;
-							simvol.push_back(encrypt_str[i]);
+						char* str_encrupt_ch = new char[encrypt_str.size()];
+						
+						int ff = encrypt_str.size() / key_size;
+						
+						for (int i = 0; i < ff; i++) {
 							for (int j = 0; j < key_size; j++) {
-								string key_sm = key.at("key").at(j).at(0);
-								int key_sdvig = key.at("key").at(j).at(1);
-
-								if (simvol[0] == key_sm[0]+key_sdvig) {
-									int simvol_1;
-									simvol_1 = key.at("key").at(j).at(1);
-									encrypt_str[i] = encrypt_str[i]-simvol_1;
-									break;
-								}
-
+								int tt = key.at("key").at(j) - 1;
+								int iii = i * key_size;
+								str_encrupt_ch[j + iii] = encrypt_str[iii+tt];
+								
 							}
+
+
 						}
-						txt_file << encrypt_str;
+
+						for (int i = 0; i < encrypt_str.size(); i++) {
+
+							end.push_back(str_encrupt_ch[i]);
+
+						}
+						int end_size = end.size();
+						for (int i = end_size - 1; i >= 0; i--) {
+							if (end[i] == '#') {
+								end.pop_back();
+							}
+							else {
+								break;
+							}
+
+						}
+
+
+
+
+
+
+						
+						txt_file << end;
 						txt_file << "\n";
 					}
+					
 					txt_file.close();
 				}
 				else {
@@ -850,8 +876,10 @@ private:
 		
 	}
 public:
-	void key_generator(string path_alph, string path_save_file) {
+	void key_generator( string path_save_file) {
 		bool trriger = 0;
+		string path_alph;
+		cout << "Enter the path to the alphabet(.alph): "; cin >> path_alph; cout << endl;
 		if (path_alph.substr(path_alph.find_last_of(".") + 1) != "alph") {
 			trriger = 1;
 		}

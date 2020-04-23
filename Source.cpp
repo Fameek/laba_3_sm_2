@@ -148,11 +148,11 @@ int main() {
 			if (i == 1) {
 				cout << "\t replacement cipher" << endl;
 				replacement a;
-				string path_alph;
+				
 				string path_save_file;
-				cout << "Enter the path to the alphabet(.alph): "; cin >> path_alph; cout << endl;
+				
 				cout << "Enter the path to save key file(.key): "; cin >> path_save_file; cout << endl;
-				a.key_generator(path_alph, path_save_file);
+				a.key_generator(path_save_file);
 				fstream ff(path_save_file);
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
@@ -162,11 +162,11 @@ int main() {
 			else if (i == 2) {
 				cout << "\t permutation cipher" << endl;
 				permutation a;
-				string path_alph;
+				
 				string path_save_file;
-				cout << "Enter the path to the alphabet(.alph): "; cin >> path_alph; cout << endl;
+				
 				cout << "Enter the path to save key file(.key): "; cin >> path_save_file; cout << endl;
-				a.key_generator(path_alph, path_save_file);
+				a.key_generator(path_save_file);
 				fstream ff(path_save_file);
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
@@ -178,11 +178,11 @@ int main() {
 			else if (i == 3) {
 				cout << "\t gamma encryption" << endl;
 				gamming a;
-				string path_alph;
+				
 				string path_save_file;
-				cout << "Enter the path to the alphabet(.alph): "; cin >> path_alph; cout << endl;
+				
 				cout << "Enter the path to save key file(.key): "; cin >> path_save_file; cout << endl;
-				a.key_generator(path_alph, path_save_file);
+				a.key_generator(path_save_file);
 				fstream ff(path_save_file);
 				if (ff.is_open()) {
 					cout << "Finish" << endl;
